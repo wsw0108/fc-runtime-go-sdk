@@ -66,7 +66,7 @@ func RegisterPreStopFunction(handler interface{}) {
 }
 
 // StartWithContext is the same as Start except sets the base context for the function.
-func StartWithContext(ctx context.Context, handler interface{}, funcType functionType) {
+func StartWithContext(ctx context.Context, handler interface{}, funcType FunctionType) {
 	StartHandlerWithContext(ctx, handler, funcType)
 }
 
@@ -80,7 +80,7 @@ func StartHandler(handler Handler) {
 	StartHandlerWithContext(context.Background(), handler, eventFunction)
 }
 
-func registerLifeCycleHandler(handler interface{}, funcType functionType) {
+func registerLifeCycleHandler(handler interface{}, funcType FunctionType) {
 	lifeCycleHandlers = append(lifeCycleHandlers, handlerWrapper{handler, funcType})
 }
 
@@ -109,7 +109,7 @@ var (
 // Handler implementation requires a single "Invoke()" function:
 //
 //	func Invoke(context.Context, []byte) ([]byte, error)
-func StartHandlerWithContext(ctx context.Context, handler interface{}, funcType functionType) {
+func StartHandlerWithContext(ctx context.Context, handler interface{}, funcType FunctionType) {
 	startFunction := runtimeAPIStartFunction
 	config := os.Getenv(startFunction.env)
 	if config != "" {

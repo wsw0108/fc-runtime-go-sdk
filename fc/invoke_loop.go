@@ -22,7 +22,7 @@ const (
 
 type handlerWrapper struct {
 	handler  interface{}
-	funcType functionType
+	funcType FunctionType
 }
 
 // startRuntimeAPILoop will return an error if handling a particular invoke resulted in a non-recoverable error
@@ -80,7 +80,7 @@ func handleInvoke(invokeInstance *invoke, function *Function) error {
 	return nil
 }
 
-func convertInvokeFunctionType(invokeInstance *invoke) functionType {
+func convertInvokeFunctionType(invokeInstance *invoke) FunctionType {
 	funcType, err := strconv.ParseInt(invokeInstance.headers.Get(headerFunctionType), 10, 64)
 	if err != nil {
 		return handleFunction
@@ -95,7 +95,6 @@ func convertInvokeFunctionType(invokeInstance *invoke) functionType {
 	default:
 		return handleFunction
 	}
-
 }
 
 // convertInvokeRequest converts an invoke from the Runtime API, and unpacks it to be compatible with the shape of a `lambda.Function` InvokeRequest.

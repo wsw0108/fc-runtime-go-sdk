@@ -15,24 +15,24 @@ import (
 	"github.com/aliyun/fc-runtime-go-sdk/fccontext"
 )
 
-type functionType uint8
+type FunctionType uint8
 
 const (
 	// function type, do not modify!!
-	handleFunction      functionType = 0
-	initializerFunction functionType = 1
-	preStopFunction     functionType = 2
-	preFreezeFunction   functionType = 3
+	handleFunction      FunctionType = 0
+	initializerFunction FunctionType = 1
+	preStopFunction     FunctionType = 2
+	preFreezeFunction   FunctionType = 3
 
 	// base function type
-	eventFunction functionType = 101
-	httpFunction  functionType = 102
+	eventFunction FunctionType = 101
+	httpFunction  FunctionType = 102
 )
 
 // Function struct which wrap the Handler
 type Function struct {
 	ctx         context.Context
-	funcType    functionType
+	funcType    FunctionType
 	handler     Handler
 	httpHandler HttpHandler
 
@@ -43,7 +43,7 @@ type Function struct {
 }
 
 // NewFunction which creates a Function with a given Handler
-func NewFunction(handler interface{}, funcType functionType) *Function {
+func NewFunction(handler interface{}, funcType FunctionType) *Function {
 	f := &Function{
 		funcType: funcType,
 	}
@@ -78,7 +78,7 @@ func (fn *Function) Ping(req *messages.PingRequest, response *messages.PingRespo
 }
 
 // Invoke method try to perform a command given an InvokeRequest and an InvokeResponse
-func (fn *Function) Invoke(req *messages.InvokeRequest, response *messages.InvokeResponse, invokeFuncType functionType) (err error) {
+func (fn *Function) Invoke(req *messages.InvokeRequest, response *messages.InvokeResponse, invokeFuncType FunctionType) (err error) {
 	defer func() {
 		if e := recover(); e != nil {
 			response.Error = fcPanicResponse(e)
@@ -133,7 +133,8 @@ func (fn *Function) Invoke(req *messages.InvokeRequest, response *messages.Invok
 }
 
 func (fn *Function) invokeHttpFunc(invokeContext context.Context, httpParams *string,
-	reqPayload []byte, response *messages.InvokeResponse) error {
+	reqPayload []byte, response *messages.InvokeResponse,
+) error {
 	if httpParams == nil {
 		handler := errorHttpHandler(fmt.Errorf("no httpParams found in request"))
 		err := handler(invokeContext, newFcResponse(&http.Request{}), &http.Request{})
@@ -201,7 +202,7 @@ func (fn *Function) printPanicLog(requestId, errorMessage string) {
 	log.Printf(" %s [ERROR] %s\n", requestId, errorMessage)
 }
 
-func (fn *Function) printEndLog(funcType functionType, requestId string, isHandled bool) {
+func (fn *Function) printEndLog(funcType FunctionType, requestId string, isHandled bool) {
 	suffix := ""
 	if !isHandled {
 		suffix = ", Error: Unhandled function error"
@@ -219,7 +220,7 @@ func (fn *Function) printEndLog(funcType functionType, requestId string, isHandl
 	}
 }
 
-func (fn *Function) printStartLog(funcType functionType, requestId string) {
+func (fn *Function) printStartLog(funcType FunctionType, requestId string) {
 	switch funcType {
 	case initializerFunction:
 		fmt.Printf("FC Initialize Start RequestId: %s\n", requestId)

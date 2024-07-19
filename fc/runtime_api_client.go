@@ -73,7 +73,7 @@ type invoke struct {
 }
 
 type invokeTypeInfo struct {
-	funcType           functionType
+	funcType           FunctionType
 	initializer        string
 	initializerTimeout int
 }
